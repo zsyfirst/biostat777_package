@@ -177,18 +177,18 @@ if (!dir.exists(here("data"))) {
     dir.create(here("data"))
 }
 
-if (!file.exists(here("data", "tuesdata_employed_status.RDS"))) {
+if (!file.exists(here("data", "tuesdata_employed_status.csv"))) {
     tuesdata <- tidytuesdayR::tt_load("2021-02-23")
     earn <- tuesdata$earn
     employed <- tuesdata$employed
 
     # save the files to RDS objects
-    saveRDS(tuesdata$earn, file = here("data", "tuesdata_earn.RDS"))
-    saveRDS(tuesdata$employed, file = here("data", "tuesdata_employed.RDS"))
+    write.csv(tuesdata$earn, file = here("data", "tuesdata_earn.csv"))
+    write.csv(tuesdata$employed, file = here("data", "tuesdata_employed.csv"))
 }
 
-earn <- readRDS(here("data", "tuesdata_earn.RDS"))
-employed <- readRDS(here("data", "tuesdata_employed.RDS"))
+earn <- read.csv(here("data", "tuesdata_earn.csv"))
+employed <- read.csv(here("data", "tuesdata_employed.csv"))
 ```
 
 ## 3. data wrangling and data visualization
