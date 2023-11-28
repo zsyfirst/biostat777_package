@@ -157,11 +157,27 @@ Data comes from TidyTuesday, which is a weekly podcast and global community acti
 
 Here is a data dictionary for what all the column names mean: [data dictionary](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-02-23/readme.md#data-dictionary)
 
+
 ```{r message=FALSE, warning=FALSE}
+if (!require("tidyverse", quietly = TRUE)) {
+    install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+}
+
+if (!require("tidytuesdayR", quietly = TRUE)) {
+    install.packages("tidytuesdayR", repos = "http://cran.us.r-project.org")
+}
+
+if (!require("here", quietly = TRUE)) {
+    install.packages("here", repos = "http://cran.us.r-project.org")
+}
+
+if (!require("ggplot2", quietly = TRUE)) {
+    install.packages("ggplot2", repos = "http://cran.us.r-project.org")
+}
+
 library("tidytuesdayR")
 library("here")
 library("tidyverse")
-# library("lubridate")
 ```
 
 ## 2. Load the data into R
