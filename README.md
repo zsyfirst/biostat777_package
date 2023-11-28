@@ -14,7 +14,7 @@ You can install the development version of calculate like so:
 
 ``` r
 # Install CalSiyu from GitHub (contain vignettes)
-devtools::install_github("https://github.com/jhu-statprogramming-fall-2023/biostat777-project2-zsyfirst", build_vignettes = TRUE)
+devtools::install_github("zsyfirst/biostat777_package", build_vignettes = TRUE)
 ```
 
 ## List of exported functions
