@@ -1,0 +1,23 @@
+---
+title: "Vignette"
+author: "Siyu Zou"
+date: "2023-11-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+# install.packages("usethis")
+# install.packages("devtools")
+library(usethis)
+library(devtools)
+
+```
+
+```{r}
+use_vignette("vignettes")
+
+use_readme_md("README")
+```
+
+
+

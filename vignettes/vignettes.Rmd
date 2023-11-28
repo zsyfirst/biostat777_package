@@ -1,0 +1,357 @@
+---
+title: "vignettes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{vignettes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width=6, fig.height=4
+)
+```
+
+# Introduction
+
+`CalSiyu` is an R package designed to calculate confidence intervals for a given set of data. This vignette demonstrates how to use the package's main functionalities including creating `ci_class` objects, calculating confidence intervals, and utilizing the print and summary methods
+
+# Setup
+
+first, load the "CalSiyu" package
+
+```{r setup}
+library(CalSiyu)
+```
+
+# Creating ci_class Objects
+
+```{r}
+set.seed(1234)
+x <- rnorm(100)
+ci_object <- make_ci_class(x)
+
+```
+
+# Calculating Confidence Intervals
+
+To calculate a confidence interval, use the calculate_CI() function:
+
+```{r}
+# Calculating a 95% confidence interval
+ci_example <- calculate_CI(ci_object)
+ci_example
+ci_example2 <- calculate_CI(ci_object, 0.90)
+ci_example2
+```
+
+# Print and Summary Methods
+
+```{r}
+print(ci_object)  # Explicitly using the print() method
+
+summary(ci_object)
+```
+
+# Part 3C: Demonstrate fn_cos()
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2) ## package to make ggplots
+# install.packages('reshape2') # run this line if reshape2 is not installed
+library(reshape2) ## package to make data frames for ggplot
+library(tidyverse)
+```
+
+```{r}
+x_values <- seq(0, 10, by = 0.1)
+y_cos <- cos(x_values)
+y_fn_1 <- fn_cos(x_values, 1)
+y_fn_3 <- fn_cos(x_values, 3)
+y_fn_5 <- fn_cos(x_values, 5)
+y_fn_7 <- fn_cos(x_values, 7)
+y_fn_9 <- fn_cos(x_values, 9)
+
+data <-data.frame(x_values, y_cos, y_fn_1,y_fn_3, y_fn_5, y_fn_7, y_fn_9 )
+
+data_melted <- melt(data, id.vars = "x_values") ## use ?melt() to see what it's doing
+
+## Change labels for y1, y2, y3, y4, y5
+data_melted$variable <- 
+  factor(as.character(data_melted$variable),
+         levels = c("y_cos", "y_fn_1", "y_fn_3", "y_fn_5", "y_fn_7", "y_fn_9"),
+         labels = c("cos(x)", "fn_cos, k=1", 
+                    "fn_cos, k=3", "fn_cos, k=5", 
+                    "fn_cos, k=7", "fn_cos, k=9"))
+
+data_melted %>%
+      ggplot( aes(x_values,value ) ) +
+      geom_line(data = subset(data_melted, variable != "cos"),aes(color = variable), linewidth=1) +
+      geom_point(data = subset(data_melted, variable == "cos"),aes(color = variable), size = 1 ) +
+      theme_minimal() +
+      labs(
+            title = "Comparison of fn_cos(x, k) with cos(x)",
+            x = "x values",
+            y = "Calculated y values",
+            color = "Function and k value"
+      ) +
+      guides(color = guide_legend(override.aes = list(linetype = c("blank", "solid", "solid", "solid", "solid", "solid"),
+                                                  shape = c(16, NA, NA, NA, NA, NA))))
+```
+
+# Part 3D: Demonstrate fn_sin()
+
+```{r}
+x_values <- seq(0, 10, by = 0.1)
+y_sin <- sin(x_values)
+y_fn_1 <- fn_sin(x_values, 1)
+y_fn_3 <- fn_sin(x_values, 3)
+y_fn_5 <- fn_sin(x_values, 5)
+y_fn_7 <- fn_sin(x_values, 7)
+y_fn_9 <- fn_sin(x_values, 9)
+
+data <-data.frame(x_values, y_sin, y_fn_1,y_fn_3, y_fn_5, y_fn_7, y_fn_9 )
+
+data_melted <- melt(data, id.vars = "x_values") ## use ?melt() to see what it's doing
+
+## Change labels for y1, y2, y3, y4, y5
+data_melted$variable <- 
+  factor(as.character(data_melted$variable),
+         levels = c("y_sin", "y_fn_1", "y_fn_3", "y_fn_5", "y_fn_7", "y_fn_9"),
+         labels = c("sin(x)", "fn_sin, k=1", 
+                    "fn_sin, k=3", "fn_sin, k=5", 
+                    "fn_sin, k=7", "fn_sin, k=9"))
+
+data_melted %>%
+      ggplot( aes(x_values,value ) ) +
+      geom_line(data = subset(data_melted, variable != "sin"),aes(color = variable), linewidth=1) +
+      geom_point(data = subset(data_melted, variable == "sin"),aes(color = variable), size = 1 ) +
+      theme_minimal() +
+      labs(
+            title = "Comparison of fn_sin(x, k) with sin(x)",
+            x = "x values",
+            y = "Calculated y values",
+            color = "Function and k value"
+      ) +
+      guides(color = guide_legend(override.aes = list(linetype = c("blank", "solid", "solid", "solid", "solid", "solid"),
+                                                  shape = c(16, NA, NA, NA, NA, NA))))
+```
+
+# Part 3E: Demonstrate calculate_CI()
+
+## 1. Pick any dataset you wish from TidyTuesday to analyze.
+
+### Question
+
+Based on the U.S. BUREAU OF LABOR STATISTICS: Which race and sex group earn the most of money every week? What's the trend of the earning over the last 10 years?
+
+### Original data
+
+Data comes from TidyTuesday, which is a weekly podcast and global community activity brought to you by the R4DS Online Learning Community. [Archive of datasets from the 2021 series of *TidyTuesday* events](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021)  <br>
+
+[Data Source for this project](https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-02-23/readme.md)
+
+### data dictionary
+
+Here is a data dictionary for what all the column names mean: [data dictionary](https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-02-23/readme.md#data-dictionary)
+
+```{r message=FALSE, warning=FALSE}
+library("tidytuesdayR")
+library("here")
+library("tidyverse")
+# library("lubridate")
+```
+
+## 2. Load the data into R
+
+In this project, one datasets comes from TidyTuesday would be used. Specifically, we will use the following data from February 23th 2021. To access the data, you need to install the *tidytuesdayR* R package and use the function *tt_load()* with the date of '2021-02-23' to load the data.
+
+```{r}
+# tuesdata <- tidytuesdayR::tt_load("2021-02-23")
+# employed <- tuesdata$employed
+
+# tests if a directory named "data" exists locally
+if (!dir.exists(here("data"))) {
+    dir.create(here("data"))
+}
+
+if (!file.exists(here("data", "tuesdata_employed_status.RDS"))) {
+    tuesdata <- tidytuesdayR::tt_load("2021-02-23")
+    earn <- tuesdata$earn
+    employed <- tuesdata$employed
+
+    # save the files to RDS objects
+    saveRDS(tuesdata$earn, file = here("data", "tuesdata_earn.RDS"))
+    saveRDS(tuesdata$employed, file = here("data", "tuesdata_employed.RDS"))
+}
+
+earn <- readRDS(here("data", "tuesdata_earn.RDS"))
+employed <- readRDS(here("data", "tuesdata_employed.RDS"))
+```
+
+## 3. data wrangling and data visualization
+
+### data wrangling
+
+::: callout-note
+Note that this data wrangling used 5 functions from *dplyr*, including: `select`, `mutate`,`filter`,`summarise`,`arrange`; 2 functions from *tidyr*, including:`as.tibble`, `replace_na`, `drop_na`;
+:::
+
+```{r}
+#| warning: false
+
+glimpse(earn)
+
+earn_clean <- earn %>%
+      select(sex, race, age, year, median_weekly_earn , n_persons) %>%
+      mutate(
+            age_group = case_when(  age == "16 to 24 years" ~ 1 ,
+                                    age == "25 to 54 years" ~ 2 ,
+                                    age == "55 years and over" ~ 3 ,
+                                    ),
+            sex_group = factor(sex, levels = c("Both Sexes", "Men", "Women") , labels = c(0, 1, 2))
+      )  %>%
+      filter(age_group == 2 ) %>%
+      mutate(Race_group = factor(race, levels = c("All Races", "Asian", "Black or African American","White") , labels = c(0, 1, 2, 3) ))
+
+adults_earn_race <- earn_clean %>%
+      group_by( race, year) %>% 
+      summarise(
+            year_earn = sum(median_weekly_earn)
+      )  %>%
+      arrange(year, .by_group = TRUE)
+
+adults_earn_sex <- earn_clean %>%
+      group_by( sex_group, year) %>% 
+      summarise(
+            year_earn = sum(median_weekly_earn)
+      ) %>%
+      arrange(desc(year), .by_group = TRUE)
+
+
+earn_wider <- pivot_wider(earn_clean, names_from = sex, values_from = median_weekly_earn)
+
+earn_wider <- as.tibble(earn_wider) 
+
+replace_na(earn_wider, list(Both_sex = 0 ))
+drop_na(earn_wider)
+```
+
+::: callout-tip
+## three plots
+
+There are three plots to show the median weekly earning over time, stratified by race and sex.
+:::
+
+```{r fig.width=6, fig.height=4}
+adults_earn_race %>%
+      ggplot( aes(year, year_earn, color = race))  +
+      geom_smooth(stat = "smooth", position = "identity", method = "lm") +
+      labs(
+            title = "Median weekly earning by race over time",
+            subtitle = "Increasing trend of weekly earning from 2010 to 2020",
+            caption = "Siyu Zou",
+            y = "Median weekly earning (Current dollars)",
+            x = "Time (Year)"
+      ) +
+      scale_x_continuous(breaks = seq(2010, 2020, 1), labels = seq(2010, 2020, 1) ) +
+      theme_minimal() +
+      theme(
+          plot.title = element_text(hjust = 0.5, face = "bold", size = 15),
+          plot.subtitle = element_text(hjust = 0.5, color = "darkblue", face = "italic", size = 13),
+          axis.title = element_text(color = "black", size = 12),
+          axis.text = element_text(color = "black", size = 11)
+      )
+```
+
+```{r}
+#| column: margin
+#| fig-cap: "Male vs female, colored by sex"
+adults_earn_sex %>%
+      ggplot( aes(year, year_earn, color = sex_group))  +
+      geom_boxplot(stat = "boxplot", position = "dodge2" ) +
+      labs(
+            title = "Median weekly earning by sex over time",
+            subtitle = "Increasing trend of weekly earning from 2010 to 2020",
+            caption = "Siyu Zou",
+            y = "Median weekly earning (Current dollars)",
+            x = "Time (Year)"
+      ) +
+      scale_x_continuous(breaks = seq(2010, 2020, 1), labels = seq(2010, 2020, 1) ) +
+      theme_minimal() +
+      theme(
+          plot.title = element_text(hjust = 0.5, face = "bold", size = 15),
+          plot.subtitle = element_text(hjust = 0.5, color = "darkblue", face = "italic", size = 13),
+          axis.title = element_text(color = "black", size = 12),
+          axis.text = element_text(color = "black", size = 11)
+      )
+```
+
+```{r}
+earn_clean %>%
+      ggplot(aes(year, median_weekly_earn, color = sex_group)) +
+      geom_point( ) +
+      geom_smooth(method = 'loess') +
+      facet_grid( sex ~ race , scales = "free") +
+      labs(
+            title = "Median weekly earning over time",
+            subtitle = "Increasing trend, stratified by race and sex",
+            x = "Time(year)",
+            y = "Median weekly earning (Current dollars)",
+            caption = "Siyu Zou"
+      ) +
+      scale_x_continuous(breaks = seq(2010, 2020, 3), labels = seq(2010, 2020, 3) ) +
+      theme_minimal() +
+      theme(
+            strip.text = element_text(color = "#1380A1" , size = 8),  
+            strip.background = element_rect(fill = "white", color = "white", linewidth = 1  ),
+            plot.title = element_text(hjust = 0.5, color = "black", face = "bold", size = 15) , 
+            plot.subtitle = element_text(hjust = 0.5, color = "black", face = "italic", size = 13) ,  
+            plot.background = element_rect(fill = "white" ),
+    
+            # panel.grid.major = element_line(color = "white", linewidth = 0.5), 
+            # panel.grid.minor = element_line(color = "white"),
+    
+            axis.title = element_text(color = "black",size = 12),
+            axis.text = element_text(color = "black", size = 9)
+      )
+```
+
+## 4. Apply the function calculate_CI() at least once in the vignette.
+
+### Calculate_CI
+
+```{r}
+earn_race_ci <- earn_clean %>%
+      group_by( race, year) %>% 
+      summarise(
+            year_earn = sum(median_weekly_earn),
+            earn_lower_CI = calculate_CI( c(median_weekly_earn, 0.90))[1],
+            earn_upper_CI = calculate_CI( c(median_weekly_earn, 0.90))[2]
+      )  %>%
+      arrange(year, .by_group = TRUE)
+earn_race_ci
+```
+
+```{r}
+summary_earn_sex_ci <- earn_clean %>% 
+      group_by( sex_group, year) %>% 
+      summarise(
+            year_earn = mean(median_weekly_earn),
+            lower_bound = calculate_CI(median_weekly_earn)[1],
+            upper_bound = calculate_CI(median_weekly_earn)[2]
+      )   
+summary_earn_sex_ci
+```
+
+### Summary
+Which race and sex group earn the most of money every week? <br>
+Based on the U.S. Bureau of Labor Statistics (BLS) projects, in the past 10 years, all race groups' weekly earning were increasing. Specially, Asian had the highest median weekly earning from 2010 to 2020. Black or African American had the lowest median weekly earning from 2010 to 2020. Compared to women, men had higher median weekly earning. In total, Asian men had the highest median weekly earning, Black or African American women had the lowest median weekly earning over the 10 years.
+
+## list out each of the functions used from each of the packages
+
+*dplyr*: mutate, select, filter, summarise, arrange <br>
+*ggplot2*: geom_smooth, geom_boxplot, geom_point  <br>
+*tidyr*: as_tibble, pivot_wider, replace_na, drop_na
